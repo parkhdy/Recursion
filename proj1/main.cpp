@@ -10,9 +10,30 @@
 
 class gameSpace : public QWidget
 {
+  //Q_OBJECT
+
 public:
   gameSpace(QWidget *parent = 0);
+
+public slots:
+  void charWindow();
 };
+
+class subWindow : public QWidget
+{
+public:
+  subWindow(QWidget *parent);
+};
+
+subWindow::subWindow(QWidget *parent)
+  : QWidget(parent)
+{
+  QPushButton *button1 = new QPushButton(tr("Button"));
+  
+  QGridLayout *gridLayout = new QGridLayout;
+  gridLayout->addWidget(button1, 0, 0);
+  setLayout(gridLayout);
+}
 
 gameSpace::gameSpace(QWidget *parent)
   : QWidget(parent)
@@ -41,6 +62,9 @@ gameSpace::gameSpace(QWidget *parent)
   (void) new QShortcut(Qt::Key_Left, wspace, SLOT(moveLEFT()));
   (void) new QShortcut(Qt::CTRL + Qt::Key_Q, this, SLOT(close()));
 
+  connect(button1, SIGNAL(clicked()), 
+          this, SLOT(charWindow()));
+
   QGridLayout *gridLayout = new QGridLayout;
   gridLayout->addWidget(wspace, 0, 0, 2, 2);
   gridLayout->addWidget(wtree, 0, 2, 1, 2);
@@ -52,6 +76,12 @@ gameSpace::gameSpace(QWidget *parent)
   gridLayout->setColumnStretch(0, 8);
   gridLayout->setColumnStretch(1, 8);
   setLayout(gridLayout);
+}
+
+void gameSpace::charWindow()
+{
+  subWindow subwin(this);
+  subwin.show();
 }
 
 int main(int argc, char *argv[])
