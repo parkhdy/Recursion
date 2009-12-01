@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'localmap.h'
 **
-** Created: Mon Nov 23 19:05:19 2009
+** Created: Tue Dec 1 04:57:12 2009
 **      by: The Qt Meta Object Compiler version 59 (Qt 4.4.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,15 +23,19 @@ static const uint qt_meta_data_localMap[] = {
        1,       // revision
        0,       // classname
        0,    0, // classinfo
-       0,    0, // methods
+       1,   10, // methods
        0,    0, // properties
        0,    0, // enums/sets
+
+ // slots: signature, parameters, type, tag, flags
+      18,   10,    9,    9, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_localMap[] = {
-    "localMap\0"
+    "localMap\0\0nextmap\0"
+    "updateMap(std::vector<std::vector<char> >)\0"
 };
 
 const QMetaObject localMap::staticMetaObject = {
@@ -57,6 +61,12 @@ int localMap::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     _id = QWidget::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: updateMap((*reinterpret_cast< std::vector<std::vector<char> >(*)>(_a[1]))); break;
+        }
+        _id -= 1;
+    }
     return _id;
 }
 QT_END_MOC_NAMESPACE

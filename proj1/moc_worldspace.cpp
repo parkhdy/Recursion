@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'worldspace.h'
 **
-** Created: Wed Nov 25 19:20:27 2009
+** Created: Tue Dec 1 05:27:42 2009
 **      by: The Qt Meta Object Compiler version 59 (Qt 4.4.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,27 +23,31 @@ static const uint qt_meta_data_worldSpace[] = {
        1,       // revision
        0,       // classname
        0,    0, // classinfo
-       6,   10, // methods
+       8,   10, // methods
        0,    0, // properties
        0,    0, // enums/sets
 
  // signals: signature, parameters, type, tag, flags
-      22,   12,   11,   11, 0x05,
-      48,   38,   11,   11, 0x05,
+      12,   11,   11,   11, 0x05,
+      20,   11,   11,   11, 0x05,
+      71,   64,   32,   11, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-      64,   11,   11,   11, 0x0a,
-      73,   11,   11,   11, 0x0a,
-      84,   11,   11,   11, 0x0a,
-      95,   11,   11,   11, 0x0a,
+     112,   11,   11,   11, 0x0a,
+     121,   11,   11,   11, 0x0a,
+     132,   11,   11,   11, 0x0a,
+     143,   11,   11,   11, 0x0a,
+     155,   11,   11,   11, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_worldSpace[] = {
-    "worldSpace\0\0dir,nXpos\0movedX(int,int)\0"
-    "dir,nYpos\0movedY(int,int)\0moveUP()\0"
-    "moveDOWN()\0moveLEFT()\0moveRIGHT()\0"
+    "worldSpace\0\0moved()\0updateMap()\0"
+    "std::vector<std::vector<char> >\0newmap\0"
+    "sendMap(std::vector<std::vector<char> >)\0"
+    "moveUP()\0moveDOWN()\0moveLEFT()\0"
+    "moveRIGHT()\0updateSlice()\0"
 };
 
 const QMetaObject worldSpace::staticMetaObject = {
@@ -71,29 +75,39 @@ int worldSpace::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: movedX((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
-        case 1: movedY((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
-        case 2: moveUP(); break;
-        case 3: moveDOWN(); break;
-        case 4: moveLEFT(); break;
-        case 5: moveRIGHT(); break;
+        case 0: moved(); break;
+        case 1: updateMap(); break;
+        case 2: { std::vector<std::vector<char> > _r = sendMap((*reinterpret_cast< std::vector<std::vector<char> >(*)>(_a[1])));
+            if (_a[0]) *reinterpret_cast< std::vector<std::vector<char> >*>(_a[0]) = _r; }  break;
+        case 3: moveUP(); break;
+        case 4: moveDOWN(); break;
+        case 5: moveLEFT(); break;
+        case 6: moveRIGHT(); break;
+        case 7: updateSlice(); break;
         }
-        _id -= 6;
+        _id -= 8;
     }
     return _id;
 }
 
 // SIGNAL 0
-void worldSpace::movedX(int _t1, int _t2)
+void worldSpace::moved()
 {
-    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
-    QMetaObject::activate(this, &staticMetaObject, 0, _a);
+    QMetaObject::activate(this, &staticMetaObject, 0, 0);
 }
 
 // SIGNAL 1
-void worldSpace::movedY(int _t1, int _t2)
+void worldSpace::updateMap()
 {
-    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
-    QMetaObject::activate(this, &staticMetaObject, 1, _a);
+    QMetaObject::activate(this, &staticMetaObject, 1, 0);
+}
+
+// SIGNAL 2
+std::vector<std::vector<char> > worldSpace::sendMap(std::vector<std::vector<char> > _t1)
+{
+    std::vector<std::vector<char> > _t0;
+    void *_a[] = { const_cast<void*>(reinterpret_cast<const void*>(&_t0)), const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 2, _a);
+    return _t0;
 }
 QT_END_MOC_NAMESPACE

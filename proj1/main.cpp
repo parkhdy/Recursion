@@ -3,6 +3,7 @@
 #include <QGridLayout>
 #include <QPushButton>
 #include <QShortcut>
+#include <vector>
 
 #include "worldspace.h"
 #include "worldtree.h"
@@ -65,6 +66,13 @@ gameSpace::gameSpace(QWidget *parent)
   connect(button1, SIGNAL(clicked()), 
           this, SLOT(charWindow()));
 
+  connect(wspace, SIGNAL(moved()), 
+          wspace, SLOT(updateSlice()));
+
+  connect(wspace, SIGNAL(sendMap(std::vector<std::vector<char> >)),
+          lmap, SLOT(updateMap(std::vector<std::vector<char> >)));
+                         
+          
   QGridLayout *gridLayout = new QGridLayout;
   gridLayout->addWidget(wspace, 0, 0, 2, 2);
   gridLayout->addWidget(wtree, 0, 2, 1, 2);
@@ -88,7 +96,7 @@ int main(int argc, char *argv[])
 {
   QApplication app(argc, argv);
   gameSpace warudo;
-  warudo.setGeometry(100, 100, 700, 555);
+  warudo.setGeometry(100, 100, 700, 575);
   warudo.show();
   return app.exec();
 }
