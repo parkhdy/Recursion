@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'localmap.h'
 **
-** Created: Tue Dec 1 04:57:12 2009
+** Created: Tue Dec 1 23:28:20 2009
 **      by: The Qt Meta Object Compiler version 59 (Qt 4.4.1)
 **
 ** WARNING! All changes made in this file will be lost!

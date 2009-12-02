@@ -19,15 +19,14 @@ void localMap::updateMap(std::vector<std::vector<char> > nextmap)
 
 void localMap::paintEvent(QPaintEvent *)
 {
-  //Paints Slice, which is the area of the world that's
-  //visible to us.
+  //Paints the entire world.
   QPainter painter(this);
 
-  for(int r = 0; r < WINSIZE; r++)
+  for(int c = 0; c < COL; c++)
     {
-      for(int c = 0; c < WINSIZE; c++)
+      for(int r = 0; r < ROW; r++)
         {
-          paintTile(painter, r, c, cmap[r][c]);
+          paintTile(painter, r, c, cmap[c][r]);
         }
     }
   

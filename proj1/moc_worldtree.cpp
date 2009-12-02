@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'worldtree.h'
 **
-** Created: Mon Nov 23 19:02:08 2009
+** Created: Tue Dec 1 23:28:22 2009
 **      by: The Qt Meta Object Compiler version 59 (Qt 4.4.1)
 **
 ** WARNING! All changes made in this file will be lost!

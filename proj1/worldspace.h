@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "defs.h"
+#include "mapmaker.h"
 
 class worldSpace : public QWidget
 {
@@ -30,17 +31,23 @@ protected:
 
 private:
   std::vector<std::vector<char> > prepMap();
+  char onPortal();
   void moveChar(int dir);
   bool traversable(int dir);
   bool canPush(int dir);
+  void teleportal(int dir);
   void push(int dir);
   void paintTile(QPainter &painter, 
                  int row, int col,
                  char type);
 
+  void printLevel(int alvl);
+
   int cXpos;
   int cYpos;
   int cdir; //0 = Up, 1 = Down, 2 = Right, 3 = Left
+  int onlvl;
+  mapMaker cartographer;
 
   QRect currentTile(int grow, int gcol);
 
@@ -51,6 +58,8 @@ private:
 
   //The 'impermanent' vectors that are not always visible.
   std::vector<std::vector<char> > lvl1;
+  std::vector<std::vector<char> > lvl2;
+  std::vector<std::vector<char> > lvl3;
 };
 
 #endif

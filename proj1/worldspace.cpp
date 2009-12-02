@@ -1,4 +1,5 @@
 #include <QPainter>
+#include <iostream>
 
 #include "worldspace.h"
 
@@ -9,6 +10,7 @@ worldSpace::worldSpace(QWidget *parent)
   setAutoFillBackground(true);
   cXpos = 12;
   cYpos = 12;
+  onlvl = 1;
   
   //Initalizes the "permanent" vectors to the correct size.
   rockmap = std::vector<std::vector<char> > (ROW, std::vector<char>(COL,'n'));
@@ -17,30 +19,29 @@ worldSpace::worldSpace(QWidget *parent)
 
   //Initalizes the "impermanent" vectors to the correct size.
   lvl1 = std::vector<std::vector<char> > (ROW, std::vector<char>(COL, 'g'));
+  lvl2 = std::vector<std::vector<char> > (ROW, std::vector<char>(COL, 'g'));
+  lvl3 = std::vector<std::vector<char> > (ROW, std::vector<char>(COL, 'g'));
 
   //Initalize the down portal, the up portal and some terrain features.
-  lvl1[12][20] = 'd';
-  lvl1[12][22] = 'u';
-  lvl1[18][18] = 'i';
-  
-  //Make a small pool of water.
-  lvl1[20][20] = 'w';
-  lvl1[20][21] = 'w';
-  lvl1[21][20] = 'w';
-  lvl1[21][21] = 'w';
+  //The fact that these are held in text files make for easy editing by me!
+  //Thank god for small favors amirite?
+  rockmap = cartographer.readLevel(0);
+  lvl1 = cartographer.readLevel(1);
 
-  //Initalizes the "rock map"
-  //Figure out a way to make this a static dec.
-  for(int c = 0; c < COL; c++)
-    {
-      for(int r = 0; r < ROW; r++)
-        {
-          if(r == 5 && (c < 10 || c > 15))
-            rockmap[c][r] = 'r';
-          else
-            rockmap[c][r] = 'n';
-        }
-    }
+  //Initalize the up/down portal for level 2
+  lvl2[6][8] = 'u';
+  lvl2[12][14] = 'd';
+
+  //Pool of water on level 2
+  lvl2[20][19] = 'w';
+  lvl2[20][20] = 'w';
+  lvl2[20][21] = 'w';
+  lvl2[21][20] = 'w';
+  lvl2[21][21] = 'w';
+
+  //Initalize the up/down portal for level 3
+  lvl3[18][20] = 'u';
+ 
 
   //The default clvl, or current level, is level 1.
   clvl = lvl1;
@@ -49,27 +50,33 @@ worldSpace::worldSpace(QWidget *parent)
   update();
 }
 
+//Old was 0 = up, 1 = down, 2 = right, 3 = left.
+//I think I may have reversed this somehow...
+//Which I can't wrap my head around.
+//New is 3 = up, 2 = down, 1 = right, 0 = left.
+//For some reason the vector structure is vec[y][x], which
+//doesn't make all that much sense to me, frankly.
 void worldSpace::moveUP()
-{
-  cdir = 0;
-  moveChar(cdir);
-}
-
-void worldSpace::moveDOWN()
-{
-  cdir = 1;
-  moveChar(cdir);
-}
-
-void worldSpace::moveLEFT()
 {
   cdir = 3;
   moveChar(cdir);
 }
 
-void worldSpace::moveRIGHT()
+void worldSpace::moveDOWN()
 {
   cdir = 2;
+  moveChar(cdir);
+}
+
+void worldSpace::moveLEFT()
+{
+  cdir = 0;
+  moveChar(cdir);
+}
+
+void worldSpace::moveRIGHT()
+{
+  cdir = 1;
   moveChar(cdir);
 }
 
@@ -78,50 +85,65 @@ void worldSpace::updateSlice()
   //Check the rockmap against the current terrain to see if there are any
   //Rocks over a water tile. If there are, destroy the rock and the water
   //Tile.
-  for(int r = 0; r < ROW; r++)
+  for(int c = 0; c < COL; c++)
     {
-      for(int c = 0; c < COL; c++)
+      for(int r = 0; r < ROW; r++)
         {
-          if(clvl[r][c] == 'w' && rockmap[r][c] == 'r')
+          if(clvl[c][r] == 'w' && rockmap[c][r] == 'r')
             {
-              clvl[r][c] = 'g';
-              rockmap[r][c] = 'n';
+              if(onlvl == 1)
+                {
+                  lvl1[c][r] = 'g';
+                  clvl = lvl1;
+                }
+              else if(onlvl == 2)
+                {
+                  lvl2[c][r] = 'g';
+                  clvl = lvl2;
+                }
+              else if(onlvl == 3)
+                {
+                  lvl3[c][r] = 'g';
+                  clvl = lvl3;
+                }
+
+              rockmap[c][r] = 'n';
             }
         }
     }
 
   //Update Slice with the current terrain.
-  int r2 = 0;
-  for(int r = cXpos-12; r < cXpos+13; r++)
+  int c2 = 0;
+  for(int c = cXpos-12; c < cXpos+13; c++)
     {
-      int c2 = 0;
-      for(int c = cYpos-12; c < cYpos+13; c++)
+      int r2 = 0;
+      for(int r = cYpos-12; r < cYpos+13; r++)
         {
           //If r is less than 0 or more than ROW/COL, it's off the map.
           //Update Slice with a 'n' or null tile. Otherwise, update it
           //with what's currently there.
           if((r >= 0 && r < ROW) && (c >= 0 && c < COL))
-            slice[r2][c2] = clvl[r][c];
+            slice[c2][r2] = clvl[c][r];
           else
-            slice[r2][c2] = 'n';
-          c2 = c2 + 1;
+            slice[c2][r2] = 'n';
+          r2 = r2 + 1;
         }
-      r2 = r2 + 1;
+      c2 = c2 + 1;
     }
 
   //Update slice with the rockmap.
-  r2 = 0;
-  for(int r = cXpos-12; r < cXpos+13; r++)
+  c2 = 0;
+  for(int c = cXpos-12; c < cXpos+13; c++)
     {
-      int c2 = 0;
-      for(int c = cYpos-12; c < cYpos+13; c++)
+      int r2 = 0;
+      for(int r = cYpos-12; r < cYpos+13; r++)
         {
           if((r >= 0 && r < ROW) && (c >= 0 && c < COL) 
-             && (rockmap[r][c] == 'r'))
-            slice[r2][c2] = rockmap[r][c];
-          c2 = c2 + 1;
+             && (rockmap[c][r] == 'r'))
+            slice[c2][r2] = rockmap[c][r];
+          r2 = r2 + 1;
         }
-      r2 = r2 + 1;
+      c2 = c2 + 1;
     }
   
   emit sendMap(prepMap());
@@ -134,23 +156,33 @@ std::vector<std::vector<char> > worldSpace::prepMap()
   preppedMap = clvl;
   //Updates a new array representing the map with the rockmap for reference. 
   //Should also probably show where the player is. I can easily add this.
-  for(int r = 0; r < ROW; r++)
+  for(int c = 0; c < COL; c++)
     {
-      for (int c = 0; c < COL; c++)
+      for (int r = 0; r < ROW; r++)
         {
-          if(rockmap[r][c] == 'r')
-            preppedMap[r][c] = 'r';
-          if(r == cXpos && c == cYpos)
-            preppedMap[r][c] = 'p';
+          if(rockmap[c][r] == 'r')
+            preppedMap[c][r] = 'r';
+          if(c == cXpos && r == cYpos)
+            preppedMap[c][r] = 'p';
         }
     }
 
   return preppedMap;
 }
 
+char worldSpace::onPortal()
+{
+  /*
+  std::cout << "Checking to see if you're on a portal! Result is: " 
+            << clvl[cXpos][cYpos]
+            << std::endl;
+  */
+  return clvl[cXpos][cYpos];
+}
+
 void worldSpace::moveChar(int dir)
 {
-  //Move Up / North
+  //Move left / west
   if(dir == 0)
     {
       if(cYpos == 0)
@@ -163,7 +195,7 @@ void worldSpace::moveChar(int dir)
           cYpos -= 1;
         }
     }
-  //Move down / south
+  //Move right / east
   else if(dir == 1)
     {
       if(cYpos >= COL-1)
@@ -176,7 +208,7 @@ void worldSpace::moveChar(int dir)
           cYpos += 1;
         }
     }
-  //Move right / east
+  //Move down / south
   else if(dir == 2)
     {
       if(cXpos >= ROW-1)
@@ -189,7 +221,7 @@ void worldSpace::moveChar(int dir)
           cXpos += 1;
         }
     }
-  //move left / west
+  //move up / north
   else if(dir == 3)
     {
       if(cXpos == 0)
@@ -202,6 +234,19 @@ void worldSpace::moveChar(int dir)
           cXpos -= 1;
         }
     }
+
+  if(onPortal() == 'd')
+    teleportal(0);
+  else if(onPortal() == 'u')
+    teleportal(1);
+
+  /*
+  if(lvl1 == lvl2)
+    std::cout << "Level 1 is equal to level 2." << std::endl;
+  else
+    std::cout << "Level 1 and level 2 are different." << std::endl;
+  */
+
   update();
   emit moved();
 }
@@ -212,11 +257,11 @@ void worldSpace::paintEvent(QPaintEvent *)
   //visible to us.
   QPainter painter(this);
 
-  for(int r = 0; r < WINSIZE; r++)
+  for(int c = 0; c < WINSIZE; c++)
     {
-      for(int c = 0; c < WINSIZE; c++)
+      for(int r = 0; r < WINSIZE; r++)
         {
-          paintTile(painter, r, c, slice[r][c]);
+          paintTile(painter, r, c, slice[c][r]);
         }
     }
 
@@ -271,6 +316,41 @@ bool worldSpace::canPush(int dir)
       else
         return false;
     }
+}
+
+void worldSpace::teleportal(int dir)
+{
+  //std::cout << "Using a portal!" << std::endl;
+  //0 moves you down a level, 1 moves you up a level.
+  if(dir == 0)
+    {
+      if(clvl == lvl1)
+        {
+          clvl = lvl2;
+          onlvl = 2;
+        }
+      else if(clvl == lvl2)
+        {
+          clvl = lvl3;
+          onlvl = 3;
+        }
+    }
+  else if(dir == 1)
+    {
+      if(clvl == lvl3)
+        {
+          clvl = lvl2;
+          onlvl = 2;
+        }
+      else if(clvl == lvl2)
+        {
+          clvl = lvl1;
+          onlvl = 1;
+        }
+    }
+
+  updateSlice();
+  update();
 }
 
 void worldSpace::push(int dir)
@@ -370,6 +450,55 @@ void worldSpace::paintTile(QPainter &painter,
     painter.setBrush(Qt::blue);
     
   painter.drawRect(currentTile(row, col));
+}
+
+//Put in for debugging reasons.
+void worldSpace::printLevel(int alvl)
+{
+  if(alvl == 0)
+    {
+      for(int c = 0; c < COL; c++)
+        {
+          for(int r = 0; r < ROW; r++)
+            {
+              std::cout << rockmap[c][r];
+            }
+          std::cout << std::endl;
+        } 
+    }
+  else if(alvl == 1)
+    {
+      for(int c = 0; c < COL; c++)
+        {
+          for(int r = 0; r < ROW; r++)
+            {
+              std::cout << lvl1[c][r];
+            }
+          std::cout << std::endl;
+        } 
+    }
+  else if(alvl == 2)
+    {
+      for(int c = 0; c < COL; c++)
+        {
+          for(int r = 0; r < ROW; r++)
+            {
+              std::cout << lvl2[c][r];
+            }
+          std::cout << std::endl;
+        }
+    }
+  else if(alvl == 3)
+    {
+      for(int c = 0; c < COL; c++)
+        {
+          for(int r = 0; r < ROW; r++)
+            {
+              std::cout << lvl3[c][r];
+            }
+          std::cout << std::endl;
+        }
+    }
 }
 
 QRect worldSpace::currentTile(int grow, int gcol)
