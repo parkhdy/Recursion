@@ -6,6 +6,7 @@
 
 #include "defs.h"
 #include "tile.h"
+#include "unit.h"
 #include "mapmaker.h"
 
 class worldSpace : public QWidget
@@ -40,6 +41,7 @@ private:
   bool canPush(int dir);
   void teleportal(int dir);
   void push(int dir);
+  bool isUnit(int slot, int xloc, int yloc);
   void paintTile(QPainter &painter, 
                  int row, int col,
                  tile til);
@@ -53,6 +55,9 @@ private:
   mapMaker cartographer;
 
   QRect currentTile(int grow, int gcol);
+
+  //Contains all of the player's units
+  std::vector<unit> pUnits;
 
   //The 3 'permanent' vectors that are visible no matter what.
   std::vector<std::vector<tile> > slice;

@@ -17,6 +17,7 @@ worldSpace::worldSpace(QWidget *parent)
   rockmap = std::vector<std::vector<tile> > (ROW, std::vector<tile>(COL,tile(0,0,'n')));
   slice = std::vector<std::vector<tile> > (WINSIZE, 
                                            std::vector<tile>(WINSIZE,tile(0,0,'n')));
+  pUnits = std::vector<unit> (1, unit(2,3));
 
   //Initalizes the "impermanent" vectors to the correct size.
   lvl1 = std::vector<std::vector<tile> > (ROW, std::vector<tile>(COL, tile(0,0,'g')));
@@ -219,6 +220,12 @@ void worldSpace::mousePressEvent(QMouseEvent *event)
 
       std::cout << "Actual tile picked: x: " << clvl[tileX][tileY].getX()
                 << ", y: " << clvl[tileX][tileY].getY() << std::endl << std::endl;
+
+      for(size_t x = 0; x < pUnits.size(); x++)
+        {
+          if(isUnit(x, clvl[tileX][tileY].getX(), clvl[tileX][tileY].getY()))
+            std::cout << "There is a unit here!" << std::endl;
+        }
     }
   
   //printLevel(4);
@@ -438,6 +445,20 @@ void worldSpace::push(int dir)
       rockmap[cXpos-1][cYpos].setType('n');
       rockmap[cXpos-2][cYpos].setType('r');
     }
+}
+
+//Very simple tool for finding out whether a unit is in
+//a certain position or not.
+//Preconditions = given a slot, x position and y position
+//Postconditions = Returns true if the unit in (xloc, yloc)
+// is the one specified in the slot. False otherwise.
+bool worldSpace::isUnit(int slot, int xloc, int yloc)
+{
+  if(pUnits[slot].getX() == xloc &&
+     pUnits[slot].getY() == yloc)
+    return true;
+  else
+    return false;
 }
 
 bool worldSpace::traversable(int dir)
