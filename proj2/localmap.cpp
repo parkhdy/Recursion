@@ -32,11 +32,14 @@ void localMap::paintEvent(QPaintEvent *)
   
   //Draws the red rectangle that indicates the player.
   //The player will always be located in the center of the screen.
+  //The "player" has become the "camera" and is no longer drawn
   painter.setPen(Qt::NoPen);
+  /*
   painter.setBrush(Qt::red);
   
   painter.drawRect(QRect(12*TILESIZE, 12*TILESIZE,
                          TILESIZE, TILESIZE));
+  */
 
 }
 
@@ -56,7 +59,7 @@ void localMap::paintTile(QPainter &painter,
     painter.setBrush(QColor(250, 25, 150));
   else if(t1.getType() == 'u')
     painter.setBrush(QColor(250, 150, 25));
-  else if(t1.getType() == 'p')
+  else if(t1.getType() == 't')
     painter.setBrush(Qt::red);
   else if(t1.getType() == 'i')
     painter.setBrush(QColor(0, 125, 0));

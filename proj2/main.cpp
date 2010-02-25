@@ -68,6 +68,12 @@ gameSpace::gameSpace(QWidget *parent)
   connect(button1, SIGNAL(clicked()), 
           this, SLOT(charWindow()));
 
+  connect(wspace, SIGNAL(selectedUnit(unit)),
+          wspace, SLOT(movementOverlay(unit)));
+
+  connect(wspace, SIGNAL(deselectall()),
+          wspace, SLOT(wipeOverlay()));
+
   connect(wspace, SIGNAL(moved()), 
           wspace, SLOT(updateSlice()));
 

@@ -14,10 +14,10 @@ worldSpace::worldSpace(QWidget *parent)
   onlvl = 1;
   
   //Initalizes the "permanent" vectors to the correct size.
-  overlay = std::vector<std::vector<tile> > (ROW, std::vector<tile>(COL,tile(0,0,'n')));
+  rockmap = std::vector<std::vector<tile> > (ROW, std::vector<tile>(COL,tile(0,0,'n')));
   slice = std::vector<std::vector<tile> > (WINSIZE, 
                                            std::vector<tile>(WINSIZE,tile(0,0,'n')));
-  pUnits = std::vector<unit> (1, unit(2,3,4));
+  pUnits = std::vector<unit> (1, unit(2,3));
 
   //Initalizes the "impermanent" vectors to the correct size.
   lvl1 = std::vector<std::vector<tile> > (ROW, std::vector<tile>(COL, tile(0,0,'g')));
@@ -27,12 +27,12 @@ worldSpace::worldSpace(QWidget *parent)
   //Initalize the down portal, the up portal and some terrain features.
   //The fact that these are held in text files make for easy editing by me!
   //Thank god for small favors amirite?
-  overlay = cartographer.readLevel(0);
+  rockmap = cartographer.readLevel(0);
   lvl1 = cartographer.readLevel(1);
   lvl2 = cartographer.readLevel(2);
 
-  //Adds another unit
-  pUnits.push_back(unit(5,6,4));
+  //Initalize the up/down portal for level 3
+  lvl3[18][20].setType('u');
  
 
   //The default clvl, or current level, is level 1.
@@ -78,6 +78,36 @@ void worldSpace::moveRIGHT()
 
 void worldSpace::updateSlice()
 {
+  //Check the rockmap against the current terrain to see if there are any
+  //Rocks over a water tile. If there are, destroy the rock and the water
+  //Tile.
+  for(int c = 0; c < COL; c++)
+    {
+      for(int r = 0; r < ROW; r++)
+        {
+          if(clvl[c][r].getType() == 'w' && rockmap[c][r].getType() == 'r')
+            {
+              if(onlvl == 1)
+                {
+                  lvl1[c][r].setType('g');
+                  clvl = lvl1;
+                }
+              else if(onlvl == 2)
+                {
+                  lvl2[c][r].setType('g');
+                  clvl = lvl2;
+                }
+              else if(onlvl == 3)
+                {
+                  lvl3[c][r].setType('g');
+                  clvl = lvl3;
+                }
+
+              rockmap[c][r].setType('n');
+            }
+        }
+    }
+
   //Update Slice with the current terrain. The -12 slapped on cXpos makes
   //sure that slice is centered around the camera.
   int c2 = 0;
@@ -109,7 +139,7 @@ void worldSpace::updateSlice()
       c2 = c2 + 1;
     }
 
-  //Update Slice with the Overlay
+  //Update slice with the rockmap.
   c2 = 0;
   for(int c = cXpos-12; c < cXpos+13; c++)
     {
@@ -117,60 +147,14 @@ void worldSpace::updateSlice()
       for(int r = cYpos-12; r < cYpos+13; r++)
         {
           if((r >= 0 && r < ROW) && (c >= 0 && c < COL) 
-             && (overlay[c][r].getType() == 'v'))
-            slice[c2][r2].setType(overlay[c][r].getType());
+             && (rockmap[c][r].getType() == 'r'))
+            slice[c2][r2].setType(rockmap[c][r].getType());
           r2 = r2 + 1;
         }
       c2 = c2 + 1;
     }
-
-  emit sendMap(prepMap());
-}
-
-void worldSpace::movementOverlay(unit uni)
-{ 
-  int xCost = 0;
-  int yCost = 0;
-  int tCost = 0;
-
-  //Looks at every single tile on the overlay.
-  for(int c = 0; c < COL; c++)
-    {
-      for(int r = 0; r < ROW; r++)
-        {          
-          if(uni.getY() > c)
-            yCost = uni.getY() - c;
-          else
-            yCost = c - uni.getY();
-
-          if(uni.getX() > r)
-            xCost = uni.getX() - r;
-          else
-            xCost = r - uni.getX();
-
-          tCost = xCost + yCost;
-
-          if(tCost <= uni.getSpeed())
-            overlay[r][c].setType('v');
-          else
-            overlay[r][c].setType('n');
-        }
-    }
   
-  emit moved();
-}
-
-void worldSpace::wipeOverlay()
-{
-  for(int c = 0; c < COL; c++)
-    {
-      for(int r = 0; r < ROW; r++)
-        {
-          overlay[c][r].setType('n');
-        }
-    }
-
-  emit moved();
+  emit sendMap(prepMap());
 }
 
 /*************************************
@@ -208,37 +192,27 @@ void worldSpace::paintEvent(QPaintEvent *)
 void worldSpace::mousePressEvent(QMouseEvent *event)
 {
   if (event->button() != Qt::LeftButton)
-    {
-      //Deslects all units.
-      for(size_t x = 0; x < pUnits.size(); x++)
-        {
-          pUnits[x].desel();
-        }
-      emit deselectall();
-    }
+    return;
   else
     {
       QPoint pos = event->pos();
 
-      //int sliceX = pos.x();
-      //int sliceY = pos.y();
+      int sliceX = pos.x();
+      int sliceY = pos.y();
 
       int slXrel = pos.y() / 20;
       int slYrel = pos.x() / 20;
 
       int tileX = slice[slXrel][slYrel].getX();
       int tileY = slice[slXrel][slYrel].getY();
-      
-      //The following are output lines for debugging purposes.
 
-      /*
       if(slice[slXrel][slYrel].getX() < 0 || slice[slXrel][slYrel].getY() < 0)
         {
           tileX = 0;
           tileY = 0;
           std::cout << "Picked an invalid tile. This is here to prevent a seg fault." << std::endl;
         }
-      
+
       std::cout << "Clicked Worldspace at: x: " << sliceX << ", y: " << sliceY << std::endl;
 
       std::cout << "Estimated slice position: x: " << slXrel 
@@ -249,65 +223,15 @@ void worldSpace::mousePressEvent(QMouseEvent *event)
 
       std::cout << "Actual tile picked: x: " << clvl[tileX][tileY].getX()
                 << ", y: " << clvl[tileX][tileY].getY() << std::endl << std::endl;
-      */
 
-      bool unitPresent = false;
-
-      //This will select any unit that is clicked on, and will deselect the unit only if another one is left clicked on
       for(size_t x = 0; x < pUnits.size(); x++)
         {
           if(isUnit(x, clvl[tileX][tileY].getX(), clvl[tileX][tileY].getY()))
-              unitPresent = true;
-        }
-
-      if(unitPresent)
-        {
-          for(size_t x = 0; x < pUnits.size(); x++)
-            {
-              if(isUnit(x, clvl[tileX][tileY].getX(), clvl[tileX][tileY].getY()))
-                {
-                  std::cout << "There is a unit here!" << std::endl;
-                  pUnits[x].sel();
-                  emit selectedUnit(pickUnit(clvl[tileX][tileY].getX(), clvl[tileX][tileY].getY()));
-                }
-              else
-                pUnits[x].desel();
-            }
-        }
-      else
-        {
-          //If the clicking function goes into here, it means that a unit has NOT been clicked on. First check
-          //to see if there is a unit selected.
-          bool unitSelected = false;
-          int unitSlot = 0;
-
-          for(size_t x = 0; x < pUnits.size(); x++)
-            if(pUnits[x].isSelected())
-              {
-                unitSelected = true;
-                unitSlot = x;
-              }
-
-          //If a unit is selected, check the overlay to see if you want to move it to a valid spot. If so, move it.
-          if(unitSelected)
-            {
-              //The next X position to move the unit to.
-              int nextX = overlay[tileX][tileY].getX();
-              int nextY = overlay[tileX][tileY].getY();
-              if(overlay[tileX][tileY].getType() == 'v')
-                {
-                  pUnits[unitSlot].move(nextX, nextY);
-                  pUnits[unitSlot].desel();
-                }
-              emit deselectall();
-              emit moved();
-            }
+            std::cout << "There is a unit here!" << std::endl;
         }
     }
-
-   
+  
   //printLevel(4);
-  update();
 }
 
 /*************************************
@@ -324,7 +248,12 @@ std::vector<std::vector<tile> > worldSpace::prepMap()
   for(int c = 0; c < COL; c++)
     {
       for (int r = 0; r < ROW; r++)
-        {          
+        {
+          if(rockmap[c][r].getType() == 'r')
+            preppedMap[c][r].setType('r');
+          if(c == cXpos && r == cYpos)
+            preppedMap[c][r].setType('p');
+          
           for(size_t x = 0; x < pUnits.size(); x++)
             {
               if(isUnit(x,c,r))
@@ -334,15 +263,6 @@ std::vector<std::vector<tile> > worldSpace::prepMap()
     }
 
   return preppedMap;
-}
-
-unit worldSpace::pickUnit(int xPos, int yPos)
-{
-  for(size_t x = 0; x < pUnits.size(); x++)
-    {
-      if(isUnit(x,xPos,yPos))
-        return pUnits[x];
-    }
 }
 
 char worldSpace::onPortal()
@@ -362,33 +282,58 @@ void worldSpace::moveChar(int dir)
     {
       if(cYpos == 0)
         return;
-      else
+      if(traversable(cdir))
         cYpos -= 1;
+      else if(!traversable(cdir) && canPush(cdir))
+        {
+          push(cdir);
+          cYpos -= 1;
+        }
     }
   //Move right / east
   else if(dir == 1)
     {
       if(cYpos >= COL-1)
         return;
-      else
+      if(traversable(cdir))
         cYpos += 1;
+      else if(!traversable(cdir) && canPush(cdir))
+        {
+          push(cdir);
+          cYpos += 1;
+        }
     }
   //Move down / south
   else if(dir == 2)
     {
       if(cXpos >= ROW-1)
         return;
-      else
+      if(traversable(cdir))
         cXpos += 1;
+      else if(!traversable(cdir) && canPush(cdir))
+        {
+          push(cdir);
+          cXpos += 1;
+        }
     }
   //move up / north
   else if(dir == 3)
     {
       if(cXpos == 0)
         return;
-      else
+      if(traversable(cdir))
         cXpos -= 1;
+      else if(!traversable(cdir) && canPush(cdir))
+        {
+          push(cdir);
+          cXpos -= 1;
+        }
     }
+
+  if(onPortal() == 'd')
+    teleportal(0);
+  else if(onPortal() == 'u')
+    teleportal(1);
 
   /*
   if(lvl1 == lvl2)
@@ -403,6 +348,114 @@ void worldSpace::moveChar(int dir)
   emit moved();
 }
 
+bool worldSpace::canPush(int dir)
+{
+  if(dir == 0)
+    {
+      if (cYpos-2 >= 0
+          && clvl[cXpos][cYpos-1].getType() != 'i' && clvl[cXpos][cYpos-1].getType() != 'w'
+          && clvl[cXpos][cYpos-2].getType() != 'i' 
+          && rockmap[cXpos][cYpos-2].getType() == 'n')
+        return true;
+      else
+        return false;
+    }
+  else if(dir == 1)
+    {
+      if (cYpos+2 < COL
+          && clvl[cXpos][cYpos+1].getType() != 'i' && clvl[cXpos][cYpos+1].getType() != 'w'
+          && clvl[cXpos][cYpos+2].getType() != 'i'
+          && rockmap[cXpos][cYpos+2].getType() == 'n')
+        return true;
+      else
+        return false;
+    }
+  else if(dir == 2)
+    {
+      if (cXpos+2 < ROW
+          && clvl[cXpos+1][cYpos].getType() != 'i' && clvl[cXpos+1][cYpos].getType() != 'w'
+          && clvl[cXpos+2][cYpos].getType() != 'i' 
+          && rockmap[cXpos+2][cYpos].getType() == 'n')
+        return true;
+      else
+        return false;
+    }
+  else //Dir == 3
+    {
+      if (cXpos-2 >= 0
+          && clvl[cXpos-1][cYpos].getType() != 'i' && clvl[cXpos-1][cYpos].getType() != 'w'
+          && clvl[cXpos-2][cYpos].getType() != 'i'
+          && rockmap[cXpos-2][cYpos].getType() == 'n')
+        return true;
+      else
+        return false;
+    }
+}
+
+void worldSpace::teleportal(int dir)
+{
+  //std::cout << "Using a portal!" << std::endl;
+  //0 moves you down a level, 1 moves you up a level.
+  if(dir == 0)
+    {
+      if(/*clvl == lvl1*/onlvl == 1)
+        {
+          clvl = lvl2;
+          onlvl = 2;
+        }
+      else if(/*clvl == lvl2*/onlvl == 2)
+        {
+          clvl = lvl3;
+          onlvl = 3;
+        }
+    }
+  else if(dir == 1)
+    {
+      if(/*clvl == lvl3*/onlvl == 3)
+        {
+          clvl = lvl2;
+          onlvl = 2;
+        }
+      else if(/*clvl == lvl2*/onlvl == 2)
+        {
+          clvl = lvl1;
+          onlvl = 1;
+        }
+    }
+
+  updateSlice();
+  update();
+  emit updateTree(onlvl);
+}
+
+void worldSpace::push(int dir)
+{
+  //Push a rock north
+  if(dir == 0)
+    {
+      rockmap[cXpos][cYpos-1].setType('n');
+      rockmap[cXpos][cYpos-2].setType('r');
+    }
+  //Push a rock south
+  else if(dir == 1)
+    {
+      rockmap[cXpos][cYpos+1].setType('n');
+      rockmap[cXpos][cYpos+2].setType('r');
+    }
+  //Push a rock east / right
+  else if(dir == 2)
+    {      
+      rockmap[cXpos+1][cYpos].setType('n');
+      rockmap[cXpos+2][cYpos].setType('r');      
+    }
+  //Push a rock west / left
+  else //Dir == 3
+    {     
+      rockmap[cXpos-1][cYpos].setType('n');
+      rockmap[cXpos-2][cYpos].setType('r');
+    }
+}
+
 //Very simple tool for finding out whether a unit is in
 //a certain position or not.
 //Preconditions = given a slot, x position and y position
@@ -415,6 +468,53 @@ bool worldSpace::isUnit(int slot, int xloc, int yloc)
     return true;
   else
     return false;
+}
+
+bool worldSpace::traversable(int dir)
+{
+  //0 = Up, 1 = Down, 2 = Right, 3 = Left
+  //This will return true if the square immediately to the
+  //Direction the player wishes to go is unoccupied by a rock
+  //a "tree" or water.
+  //Creates an interesting problem with being a boolean value.
+  //Any terrain that isn't passable can have a rock pushed right
+  //out of it. Really weird.
+  if(dir == 0)
+    {
+      if( clvl[cXpos][cYpos-1].getType() != 'i' 
+          && clvl[cXpos][cYpos-1].getType() != 'w'
+          && rockmap[cXpos][cYpos-1].getType() == 'n')
+        return true;
+      else
+        return false;
+    }
+  else if(dir == 1)
+    {
+      if( clvl[cXpos][cYpos+1].getType() != 'i' 
+          && clvl[cXpos][cYpos+1].getType() != 'w'
+          && rockmap[cXpos][cYpos+1].getType() == 'n')
+        return true;
+      else
+        return false;
+    }
+  else if(dir == 2)
+    {
+     if( clvl[cXpos+1][cYpos].getType() != 'i' 
+         && clvl[cXpos+1][cYpos].getType() != 'w'
+         && rockmap[cXpos+1][cYpos].getType() == 'n')
+        return true;
+      else
+        return false;
+    }
+  else //Dir == 3
+    {
+      if( clvl[cXpos-1][cYpos].getType() != 'i'
+          && clvl[cXpos-1][cYpos].getType() != 'w'
+          && rockmap[cXpos-1][cYpos].getType() == 'n')
+        return true;
+      else
+        return false; 
+    }
 }
 
 void worldSpace::paintTile(QPainter &painter, 
@@ -437,15 +537,10 @@ void worldSpace::paintTile(QPainter &painter,
     painter.setBrush(QColor(0, 125, 0));
   else if(til.getType() == 'w')
     painter.setBrush(Qt::blue);
-  else if(til.getType() == 'v')
-    painter.setBrush(QColor(100,100,200));
   for(size_t x = 0; x < pUnits.size(); x++)
     {
       if(isUnit(x, til.getX(), til.getY()))
-        painter.setBrush(QColor(200,100,100));
-      if(isUnit(x, til.getX(), til.getY()) && 
-         pUnits[x].isSelected())
-        painter.setBrush(QColor(255,80,80));
+        painter.setBrush(Qt::red);
     }
     
   painter.drawRect(currentTile(row, col));
@@ -460,7 +555,7 @@ void worldSpace::printLevel(int alvl)
         {
           for(int r = 0; r < ROW; r++)
             {
-              std::cout << overlay[c][r].getType();
+              std::cout << rockmap[c][r].getType();
             }
           std::cout << std::endl;
         } 

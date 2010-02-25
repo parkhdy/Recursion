@@ -22,16 +22,12 @@ public slots:
   void moveLEFT();
   void moveRIGHT();
   void updateSlice();
-  void movementOverlay(unit uni);
-  void wipeOverlay();
 
 signals:
   void moved();
   void updateMap();
   std::vector<std::vector<tile> > sendMap(std::vector<std::vector<tile> > newmap);
   void updateTree(int clvl);
-  unit selectedUnit(unit uni);
-  void deselectall();
 
 protected:
   void paintEvent(QPaintEvent *event);
@@ -39,9 +35,12 @@ protected:
 
 private:
   std::vector<std::vector<tile> > prepMap();
-  unit pickUnit(int xPos, int yPos);
   char onPortal();
   void moveChar(int dir);
+  bool traversable(int dir);
+  bool canPush(int dir);
+  void teleportal(int dir);
+  void push(int dir);
   bool isUnit(int slot, int xloc, int yloc);
   void paintTile(QPainter &painter, 
                  int row, int col,
@@ -62,7 +61,7 @@ private:
 
   //The 3 'permanent' vectors that are visible no matter what.
   std::vector<std::vector<tile> > slice;
-  std::vector<std::vector<tile> > overlay;
+  std::vector<std::vector<tile> > rockmap;
   std::vector<std::vector<tile> > clvl;
 
   //The 'impermanent' vectors that are not always visible.
