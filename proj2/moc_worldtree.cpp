@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'worldtree.h'
 **
-** Created: Thu Feb 25 09:24:36 2010
+** Created: Thu Mar 18 15:21:21 2010
 **      by: The Qt Meta Object Compiler version 59 (Qt 4.4.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -28,13 +28,13 @@ static const uint qt_meta_data_worldTree[] = {
        0,    0, // enums/sets
 
  // slots: signature, parameters, type, tag, flags
-      16,   11,   10,   10, 0x0a,
+      15,   11,   10,   10, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_worldTree[] = {
-    "worldTree\0\0clvl\0updateTree(int)\0"
+    "worldTree\0\0uni\0updateTree(unit)\0"
 };
 
 const QMetaObject worldTree::staticMetaObject = {
@@ -62,7 +62,7 @@ int worldTree::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: updateTree((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 0: updateTree((*reinterpret_cast< unit(*)>(_a[1]))); break;
         }
         _id -= 1;
     }

@@ -9,12 +9,18 @@ unit::unit()
   selected = false;
 }
 
-unit::unit(int fXpos, int fYpos, int fMspeed)
+unit::unit(int fXpos, int fYpos, int fMspeed,
+           std::string fName, std::string fTitle, int fHP)
 {
   cXpos = fXpos;
   cYpos = fYpos;
   mSpeed = fMspeed;
   selected = false;
+
+  unitName = fName;
+  unitTitle = fTitle;
+  mHP = fHP;
+  cHP = mHP;
 }
 
 //Selectors
@@ -36,6 +42,26 @@ int unit::getSpeed()
 bool unit::isSelected()
 {
   return selected;
+}
+
+std::string unit::getName()
+{
+  return unitName;
+}
+
+std::string unit::getTitle()
+{
+  return unitTitle;
+}
+  
+int unit::getmHP()
+{
+  return mHP;
+}
+  
+int unit::getcHP()
+{
+  return cHP;
 }
 
 //Mutators

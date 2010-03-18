@@ -5,12 +5,17 @@
 #include <QShortcut>
 #include <QLabel>
 #include <vector>
+#include <QMdiArea>
+#include <QMainWindow>
 
 #include "worldspace.h"
 #include "worldtree.h"
 #include "localmap.h"
 #include "tile.h"
 
+class QMdiArea;
+
+//The gamespace class, which inherits from QWidget
 class gameSpace : public QWidget
 {
   //Q_OBJECT
@@ -18,26 +23,33 @@ class gameSpace : public QWidget
 public:
   gameSpace(QWidget *parent = 0);
 
-public slots:
-  void charWindow();
 };
 
-class subWindow : public QWidget
+//The "mainwindow" class, which is a Qmdiarea
+class mainWindow : public QMainWindow
 {
-public:
-  subWindow(QWidget *parent);
+  //Q_OBJECT
+
+  public:
+  mainWindow();
+
+private:
+  QMdiArea *mdiArea;
 };
 
-subWindow::subWindow(QWidget *parent)
-  : QWidget(parent)
+//Constructor for the mainWindow class
+mainWindow::mainWindow()
 {
-  QPushButton *button1 = new QPushButton(tr("Button"));
-  
-  QGridLayout *gridLayout = new QGridLayout;
-  gridLayout->addWidget(button1, 0, 0);
-  setLayout(gridLayout);
+  mdiArea = new QMdiArea;
+  setCentralWidget(mdiArea);
+
+  gameSpace *theWorld = new gameSpace;
+
+  mdiArea->addSubWindow(theWorld);
+  theWorld->showMaximized();
 }
 
+//Constructor for the gamespace class
 gameSpace::gameSpace(QWidget *parent)
   : QWidget(parent)
 {
@@ -65,8 +77,8 @@ gameSpace::gameSpace(QWidget *parent)
   (void) new QShortcut(Qt::Key_Left, wspace, SLOT(moveLEFT()));
   (void) new QShortcut(Qt::CTRL + Qt::Key_Q, this, SLOT(close()));
 
-  connect(button1, SIGNAL(clicked()), 
-          this, SLOT(charWindow()));
+  //connect(button1, SIGNAL(clicked()), 
+  //        this, SLOT(charWindow()));
 
   connect(wspace, SIGNAL(selectedUnit(unit)),
           wspace, SLOT(movementOverlay(unit)));
@@ -80,10 +92,9 @@ gameSpace::gameSpace(QWidget *parent)
   connect(wspace, SIGNAL(sendMap(std::vector<std::vector<tile> >)),
           lmap, SLOT(updateMap(std::vector<std::vector<tile> >)));
 
-  connect(wspace, SIGNAL(updateTree(int)),
-          wtree, SLOT(updateTree(int)));
-                         
-          
+  connect(wspace, SIGNAL(updateTree(unit)),
+          wtree, SLOT(updateTree(unit)));
+  
   QGridLayout *gridLayout = new QGridLayout;
   gridLayout->addWidget(wspace, 0, 0, 2, 2);
   gridLayout->addWidget(wtree, 0, 2, 1, 2);
@@ -97,17 +108,15 @@ gameSpace::gameSpace(QWidget *parent)
   setLayout(gridLayout);
 }
 
-void gameSpace::charWindow()
-{
-  subWindow subwin(this);
-  subwin.show();
-}
-
 int main(int argc, char *argv[])
 {
   QApplication app(argc, argv);
-  gameSpace warudo;
-  warudo.setGeometry(100, 100, 700, 575);
-  warudo.show();
+  //gameSpace warudo;
+  //warudo.setGeometry(100, 100, 700, 575);
+  //warudo.show();
+  mainWindow mainWin;
+  mainWin.setGeometry(100,100,696,570);
+  mainWin.show();
+
   return app.exec();
 }

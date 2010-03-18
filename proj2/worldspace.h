@@ -29,7 +29,7 @@ signals:
   void moved();
   void updateMap();
   std::vector<std::vector<tile> > sendMap(std::vector<std::vector<tile> > newmap);
-  void updateTree(int clvl);
+  void updateTree(unit uni);
   unit selectedUnit(unit uni);
   void deselectall();
 

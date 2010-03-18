@@ -17,7 +17,8 @@ worldSpace::worldSpace(QWidget *parent)
   overlay = std::vector<std::vector<tile> > (ROW, std::vector<tile>(COL,tile(0,0,'n')));
   slice = std::vector<std::vector<tile> > (WINSIZE, 
                                            std::vector<tile>(WINSIZE,tile(0,0,'n')));
-  pUnits = std::vector<unit> (1, unit(2,3,4));
+  pUnits = std::vector<unit> (1, unit(2,3,4,
+                                      "Sahar", "Demon Queen", 100));
 
   //Initalizes the "impermanent" vectors to the correct size.
   lvl1 = std::vector<std::vector<tile> > (ROW, std::vector<tile>(COL, tile(0,0,'g')));
@@ -32,7 +33,8 @@ worldSpace::worldSpace(QWidget *parent)
   lvl2 = cartographer.readLevel(2);
 
   //Adds another unit
-  pUnits.push_back(unit(5,6,4));
+  pUnits.push_back(unit(5,6,4,
+                        "Lyri", "San'layn Initiate", 100));
  
 
   //The default clvl, or current level, is level 1.
@@ -256,7 +258,8 @@ void worldSpace::mousePressEvent(QMouseEvent *event)
       //This will select any unit that is clicked on, and will deselect the unit only if another one is left clicked on
       for(size_t x = 0; x < pUnits.size(); x++)
         {
-          if(isUnit(x, clvl[tileX][tileY].getX(), clvl[tileX][tileY].getY()))
+          if(tileX >= 0 && tileY >= 0)
+            if(isUnit(x, clvl[tileX][tileY].getX(), clvl[tileX][tileY].getY()))
               unitPresent = true;
         }
 
@@ -266,9 +269,10 @@ void worldSpace::mousePressEvent(QMouseEvent *event)
             {
               if(isUnit(x, clvl[tileX][tileY].getX(), clvl[tileX][tileY].getY()))
                 {
-                  std::cout << "There is a unit here!" << std::endl;
+                  //std::cout << "There is a unit here!" << std::endl;
                   pUnits[x].sel();
                   emit selectedUnit(pickUnit(clvl[tileX][tileY].getX(), clvl[tileX][tileY].getY()));
+                  emit updateTree(pickUnit(clvl[tileX][tileY].getX(), clvl[tileX][tileY].getY()));
                 }
               else
                 pUnits[x].desel();
@@ -292,15 +296,18 @@ void worldSpace::mousePressEvent(QMouseEvent *event)
           if(unitSelected)
             {
               //The next X position to move the unit to.
-              int nextX = overlay[tileX][tileY].getX();
-              int nextY = overlay[tileX][tileY].getY();
-              if(overlay[tileX][tileY].getType() == 'v')
+              if(tileX >= 0 && tileY >= 0)
                 {
-                  pUnits[unitSlot].move(nextX, nextY);
-                  pUnits[unitSlot].desel();
+                  int nextX = overlay[tileX][tileY].getX();
+                  int nextY = overlay[tileX][tileY].getY();
+                  if(overlay[tileX][tileY].getType() == 'v')
+                    {
+                      pUnits[unitSlot].move(nextX, nextY);
+                      pUnits[unitSlot].desel();
+                    }
+                  emit deselectall();
+                  emit moved();
                 }
-              emit deselectall();
-              emit moved();
             }
         }
     }

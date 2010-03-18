@@ -2,8 +2,10 @@
 #define WORLDTREE_H
 
 #include <QWidget>
+#include <sstream>
 
 #include "defs.h"
+#include "unit.h"
 
 class worldTree : public QWidget
 {
@@ -13,7 +15,7 @@ class worldTree : public QWidget
   worldTree(QWidget *parent = 0);
 
 public slots:
-  void updateTree(int clvl);
+  void updateTree(unit uni);
 
 protected:
   void paintEvent(QPaintEvent *event);
@@ -21,10 +23,12 @@ protected:
 private:
   void paintRect(QPainter &painter,
                  int row);
+  const char* conversion(int number);
 
   QRect currentTile(int grow);
 
   int culvl;
+  unit cunit;
 };
 
 #endif

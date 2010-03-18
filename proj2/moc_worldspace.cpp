@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'worldspace.h'
 **
-** Created: Thu Feb 25 10:41:39 2010
+** Created: Thu Mar 18 15:21:19 2010
 **      by: The Qt Meta Object Compiler version 59 (Qt 4.4.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -31,18 +31,18 @@ static const uint qt_meta_data_worldSpace[] = {
       12,   11,   11,   11, 0x05,
       20,   11,   11,   11, 0x05,
       71,   64,   32,   11, 0x05,
-     117,  112,   11,   11, 0x05,
-     142,  138,  133,   11, 0x05,
-     161,   11,   11,   11, 0x05,
+     116,  112,   11,   11, 0x05,
+     138,  112,  133,   11, 0x05,
+     157,   11,   11,   11, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-     175,   11,   11,   11, 0x0a,
-     184,   11,   11,   11, 0x0a,
-     195,   11,   11,   11, 0x0a,
-     206,   11,   11,   11, 0x0a,
-     218,   11,   11,   11, 0x0a,
-     232,  138,   11,   11, 0x0a,
-     254,   11,   11,   11, 0x0a,
+     171,   11,   11,   11, 0x0a,
+     180,   11,   11,   11, 0x0a,
+     191,   11,   11,   11, 0x0a,
+     202,   11,   11,   11, 0x0a,
+     214,   11,   11,   11, 0x0a,
+     228,  112,   11,   11, 0x0a,
+     250,   11,   11,   11, 0x0a,
 
        0        // eod
 };
@@ -51,10 +51,9 @@ static const char qt_meta_stringdata_worldSpace[] = {
     "worldSpace\0\0moved()\0updateMap()\0"
     "std::vector<std::vector<tile> >\0newmap\0"
     "sendMap(std::vector<std::vector<tile> >)\0"
-    "clvl\0updateTree(int)\0unit\0uni\0"
-    "selectedUnit(unit)\0deselectall()\0"
-    "moveUP()\0moveDOWN()\0moveLEFT()\0"
-    "moveRIGHT()\0updateSlice()\0"
+    "uni\0updateTree(unit)\0unit\0selectedUnit(unit)\0"
+    "deselectall()\0moveUP()\0moveDOWN()\0"
+    "moveLEFT()\0moveRIGHT()\0updateSlice()\0"
     "movementOverlay(unit)\0wipeOverlay()\0"
 };
 
@@ -87,7 +86,7 @@ int worldSpace::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 1: updateMap(); break;
         case 2: { std::vector<std::vector<tile> > _r = sendMap((*reinterpret_cast< std::vector<std::vector<tile> >(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< std::vector<std::vector<tile> >*>(_a[0]) = _r; }  break;
-        case 3: updateTree((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 3: updateTree((*reinterpret_cast< unit(*)>(_a[1]))); break;
         case 4: { unit _r = selectedUnit((*reinterpret_cast< unit(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< unit*>(_a[0]) = _r; }  break;
         case 5: deselectall(); break;
@@ -126,7 +125,7 @@ std::vector<std::vector<tile> > worldSpace::sendMap(std::vector<std::vector<tile
 }
 
 // SIGNAL 3
-void worldSpace::updateTree(int _t1)
+void worldSpace::updateTree(unit _t1)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 3, _a);
