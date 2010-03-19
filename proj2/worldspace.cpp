@@ -206,7 +206,7 @@ void worldSpace::paintEvent(QPaintEvent *)
 }
 
 //This is supposed to tell you what tile you're clicking on when you click on the screen
-//Unfortunatley, it's incredibly inaccurate so far. This definitely needs some fine tuning.
+//I fixed it. The problem was with the fact that it wasn't swapping x/y values properly.
 void worldSpace::mousePressEvent(QMouseEvent *event)
 {
   if (event->button() != Qt::LeftButton)
