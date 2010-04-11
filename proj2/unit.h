@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "randgen.h"
+
 class unit
 {
 public:
@@ -16,6 +18,7 @@ public:
   int getY();
   int getSpeed();
   bool isSelected();
+  int atkDMG();
 
   std::string getName();
   std::string getTitle();
@@ -26,6 +29,7 @@ public:
   void move(int nextX, int nextY);
   void sel();
   void desel();
+  void takeDamage(int damage);
 
 private:
   //Member variables - "hard data"
@@ -33,12 +37,16 @@ private:
   int cYpos;
   int mSpeed;
   bool selected;
+  randgen atkDamage; //Every unit comes with a random number generator!
 
   //Information pertaining - "soft data"
   std::string unitName;
   std::string unitTitle;
   int cHP;
   int mHP;
+
+  int minDMG;
+  int maxDMG;
 };
 
 #endif

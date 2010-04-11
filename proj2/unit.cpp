@@ -7,6 +7,9 @@ unit::unit()
   cYpos = 0;
   mSpeed = 3;
   selected = false;
+
+  minDMG = 5;
+  maxDMG = 10;
 }
 
 unit::unit(int fXpos, int fYpos, int fMspeed,
@@ -21,6 +24,9 @@ unit::unit(int fXpos, int fYpos, int fMspeed,
   unitTitle = fTitle;
   mHP = fHP;
   cHP = mHP;
+
+  minDMG = 5;
+  maxDMG = 10;
 }
 
 //Selectors
@@ -42,6 +48,14 @@ int unit::getSpeed()
 bool unit::isSelected()
 {
   return selected;
+}
+
+int unit::atkDMG()
+{
+  int thePain;
+  thePain = atkDamage.randInt(minDMG, maxDMG);
+
+  return thePain;
 }
 
 std::string unit::getName()
@@ -79,4 +93,9 @@ void unit::sel()
 void unit::desel()
 {
   selected = false;
+}
+
+void unit::takeDamage(int damage)
+{
+  cHP = cHP - damage;
 }

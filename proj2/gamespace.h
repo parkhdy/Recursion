@@ -23,6 +23,18 @@ public:
 
 signals:
   void showCharwin();
+  void pickedUnitm(unit);
+  void pickedUnita(unit);
+
+public slots:
+  void moveOrderSent();
+  void attackOrderSent();
+  void showOrderWindow();
+
+private:
+  worldSpace *wspace;
+  worldTree *wtree;
+  localMap *lmap;
 };
 
 #endif

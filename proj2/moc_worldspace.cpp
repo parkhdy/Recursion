@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'worldspace.h'
 **
-** Created: Thu Mar 18 15:21:19 2010
+** Created: Sun Apr 11 00:43:43 2010
 **      by: The Qt Meta Object Compiler version 59 (Qt 4.4.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_worldSpace[] = {
        1,       // revision
        0,       // classname
        0,    0, // classinfo
-      13,   10, // methods
+      15,   10, // methods
        0,    0, // properties
        0,    0, // enums/sets
 
@@ -42,7 +42,9 @@ static const uint qt_meta_data_worldSpace[] = {
      202,   11,   11,   11, 0x0a,
      214,   11,   11,   11, 0x0a,
      228,  112,   11,   11, 0x0a,
-     250,   11,   11,   11, 0x0a,
+     250,  112,   11,   11, 0x0a,
+     270,   11,   11,   11, 0x0a,
+     284,   11,   11,   11, 0x0a,
 
        0        // eod
 };
@@ -54,7 +56,8 @@ static const char qt_meta_stringdata_worldSpace[] = {
     "uni\0updateTree(unit)\0unit\0selectedUnit(unit)\0"
     "deselectall()\0moveUP()\0moveDOWN()\0"
     "moveLEFT()\0moveRIGHT()\0updateSlice()\0"
-    "movementOverlay(unit)\0wipeOverlay()\0"
+    "movementOverlay(unit)\0attackOverlay(unit)\0"
+    "wipeOverlay()\0endYourTurn()\0"
 };
 
 const QMetaObject worldSpace::staticMetaObject = {
@@ -96,9 +99,11 @@ int worldSpace::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 9: moveRIGHT(); break;
         case 10: updateSlice(); break;
         case 11: movementOverlay((*reinterpret_cast< unit(*)>(_a[1]))); break;
-        case 12: wipeOverlay(); break;
+        case 12: attackOverlay((*reinterpret_cast< unit(*)>(_a[1]))); break;
+        case 13: wipeOverlay(); break;
+        case 14: endYourTurn(); break;
         }
-        _id -= 13;
+        _id -= 15;
     }
     return _id;
 }

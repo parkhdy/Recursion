@@ -16,6 +16,10 @@ class worldSpace : public QWidget
   public:
   worldSpace(QWidget *parent = 0);
 
+  //Selectors
+  unit selectedUnitsel();
+  bool isUnitSelected();
+
 public slots:
   void moveUP();
   void moveDOWN();
@@ -23,7 +27,9 @@ public slots:
   void moveRIGHT();
   void updateSlice();
   void movementOverlay(unit uni);
+  void attackOverlay(unit uni);
   void wipeOverlay();
+  void endYourTurn();
 
 signals:
   void moved();
@@ -38,27 +44,34 @@ protected:
   void mousePressEvent(QMouseEvent *event);
 
 private:
+  //Private Functions
   std::vector<std::vector<tile> > prepMap();
   unit pickUnit(int xPos, int yPos);
   char onPortal();
   void moveChar(int dir);
   bool isUnit(int slot, int xloc, int yloc);
+  bool isEnem(int slot, int xloc, int yloc);
   void paintTile(QPainter &painter, 
                  int row, int col,
                  tile til);
 
   void printLevel(int alvl);
 
+  //Member Variables
   int cXpos;
   int cYpos;
   int cdir; //0 = Up, 1 = Down, 2 = Right, 3 = Left
   int onlvl;
   mapMaker cartographer;
 
+  bool playerTurn;
+
   QRect currentTile(int grow, int gcol);
 
   //Contains all of the player's units
   std::vector<unit> pUnits;
+  //Contains all of the enemy's units.
+  std::vector<unit> eUnits;
 
   //The 3 'permanent' vectors that are visible no matter what.
   std::vector<std::vector<tile> > slice;

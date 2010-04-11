@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'gamespace.h'
 **
-** Created: Fri Mar 19 18:30:50 2010
+** Created: Sun Apr 11 00:43:41 2010
 **      by: The Qt Meta Object Compiler version 59 (Qt 4.4.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,18 +23,27 @@ static const uint qt_meta_data_gameSpace[] = {
        1,       // revision
        0,       // classname
        0,    0, // classinfo
-       1,   10, // methods
+       6,   10, // methods
        0,    0, // properties
        0,    0, // enums/sets
 
  // signals: signature, parameters, type, tag, flags
       11,   10,   10,   10, 0x05,
+      25,   10,   10,   10, 0x05,
+      43,   10,   10,   10, 0x05,
+
+ // slots: signature, parameters, type, tag, flags
+      61,   10,   10,   10, 0x0a,
+      77,   10,   10,   10, 0x0a,
+      95,   10,   10,   10, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_gameSpace[] = {
-    "gameSpace\0\0showCharwin()\0"
+    "gameSpace\0\0showCharwin()\0pickedUnitm(unit)\0"
+    "pickedUnita(unit)\0moveOrderSent()\0"
+    "attackOrderSent()\0showOrderWindow()\0"
 };
 
 const QMetaObject gameSpace::staticMetaObject = {
@@ -63,8 +72,13 @@ int gameSpace::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
         case 0: showCharwin(); break;
+        case 1: pickedUnitm((*reinterpret_cast< unit(*)>(_a[1]))); break;
+        case 2: pickedUnita((*reinterpret_cast< unit(*)>(_a[1]))); break;
+        case 3: moveOrderSent(); break;
+        case 4: attackOrderSent(); break;
+        case 5: showOrderWindow(); break;
         }
-        _id -= 1;
+        _id -= 6;
     }
     return _id;
 }
@@ -73,5 +87,19 @@ int gameSpace::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 void gameSpace::showCharwin()
 {
     QMetaObject::activate(this, &staticMetaObject, 0, 0);
+}
+
+// SIGNAL 1
+void gameSpace::pickedUnitm(unit _t1)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 1, _a);
+}
+
+// SIGNAL 2
+void gameSpace::pickedUnita(unit _t1)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 2, _a);
 }
 QT_END_MOC_NAMESPACE

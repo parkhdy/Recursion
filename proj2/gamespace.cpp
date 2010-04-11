@@ -5,10 +5,10 @@
 gameSpace::gameSpace(QWidget *parent)
   : QWidget(parent)
 {
-  QPushButton *button1 = new QPushButton(tr("Character"));
+  QPushButton *button1 = new QPushButton(tr("Orders"));
   button1->setFont(QFont("Times", 18, QFont::Bold));
 
-  QPushButton *button2 = new QPushButton(tr("Inventory"));
+  QPushButton *button2 = new QPushButton(tr("End Turn"));
   button2->setFont(QFont("Times", 18, QFont::Bold));
 
   QPushButton *button3 = new QPushButton(tr("Quests"));
@@ -17,11 +17,11 @@ gameSpace::gameSpace(QWidget *parent)
   QPushButton *button4 = new QPushButton(tr("Log"));
   button4->setFont(QFont("Times", 18, QFont::Bold));
 
-  worldSpace *wspace = new worldSpace;
-
-  worldTree *wtree = new worldTree;
-
-  localMap *lmap = new localMap;
+  wspace = new worldSpace;
+  
+  wtree = new worldTree;
+  
+  lmap = new localMap;
 
   (void) new QShortcut(Qt::Key_Up, wspace, SLOT(moveUP()));
   (void) new QShortcut(Qt::Key_Right, wspace, SLOT(moveRIGHT()));
@@ -30,10 +30,16 @@ gameSpace::gameSpace(QWidget *parent)
   (void) new QShortcut(Qt::CTRL + Qt::Key_Q, this, SLOT(close()));
 
   connect(button1, SIGNAL(clicked()), 
-          this, SIGNAL(showCharwin()));
+          this, SLOT(showOrderWindow()));
 
-  connect(wspace, SIGNAL(selectedUnit(unit)),
+  connect(button2, SIGNAL(clicked()),
+          wspace, SLOT(endYourTurn()));
+
+  connect(this, SIGNAL(pickedUnitm(unit)),
           wspace, SLOT(movementOverlay(unit)));
+
+  connect(this, SIGNAL(pickedUnita(unit)),
+          wspace, SLOT(attackOverlay(unit)));
 
   connect(wspace, SIGNAL(deselectall()),
           wspace, SLOT(wipeOverlay()));
@@ -58,4 +64,21 @@ gameSpace::gameSpace(QWidget *parent)
   gridLayout->setColumnStretch(0, 8);
   gridLayout->setColumnStretch(1, 8);
   setLayout(gridLayout);
+}
+
+void gameSpace::moveOrderSent()
+{
+  //std::cout << "Going into moverordersent" << std::endl;
+  emit pickedUnitm(wspace->selectedUnitsel());
+}
+
+void gameSpace::attackOrderSent()
+{
+  emit pickedUnita(wspace->selectedUnitsel());
+}
+
+void gameSpace::showOrderWindow()
+{
+  if(wspace->isUnitSelected())
+    emit showCharwin();
 }
