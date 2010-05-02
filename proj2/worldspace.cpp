@@ -18,20 +18,9 @@ worldSpace::worldSpace(QWidget *parent)
   overlay = std::vector<std::vector<tile> > (ROW, std::vector<tile>(COL,tile(0,0,'n')));
   slice = std::vector<std::vector<tile> > (WINSIZE, 
                                            std::vector<tile>(WINSIZE,tile(0,0,'n')));
-  //Add some units
-  pUnits = std::vector<unit> (1, unit(2,3,4,
-                                      "Sahar", "Demon Queen", 100));
-  pUnits.push_back(unit(5,6,4,
-                        "Lyri", "San'layn Initiate", 100));
-
-
-  //Add some enemies
-  eUnits = std::vector<unit> (1, unit(12,15,4,
-                                      "Jim", "Soldier", 11));
-  eUnits.push_back(unit(10,18,4,
-                        "John", "Soldier", 11));
 
   //Initalizes the "impermanent" vectors to the correct size.
+  lvl0 = std::vector<std::vector<tile> > (ROW, std::vector<tile>(COL, tile(0,0,'g')));
   lvl1 = std::vector<std::vector<tile> > (ROW, std::vector<tile>(COL, tile(0,0,'g')));
   lvl2 = std::vector<std::vector<tile> > (ROW, std::vector<tile>(COL, tile(0,0,'n')));
   lvl3 = std::vector<std::vector<tile> > (ROW, std::vector<tile>(COL, tile(0,0,'g')));
@@ -40,11 +29,12 @@ worldSpace::worldSpace(QWidget *parent)
   //The fact that these are held in text files make for easy editing by me!
   //Thank god for small favors amirite?
   overlay = cartographer.readLevel(0);
-  lvl1 = cartographer.readLevel(1);
-  lvl2 = cartographer.readLevel(2);
+  lvl0 = cartographer.readLevel(1);
+  lvl1 = cartographer.readLevel(2);
+  lvl2 = cartographer.readLevel(3);
 
   //The default clvl, or current level, is level 1.
-  clvl = lvl1;
+  clvl = lvl0;
 
   updateSlice();
   update();
@@ -74,6 +64,35 @@ bool worldSpace::isUnitSelected()
       }
 
   return unitSelected;
+}
+
+void worldSpace::start_clear_level()
+{
+}
+
+void worldSpace::loadlevel(int levelnum)
+{
+  if(levelnum == 1)
+    {
+      clvl = lvl1;
+
+      //If tutorial - do this
+      //Add some units
+      //unit(x,y,move,name,title,cHP)
+      pUnits = std::vector<unit> (1, unit(2,3,4,"Sahar", "Demon Queen", 100));
+      pUnits.push_back(unit(5,6,4,"Lyri", "San'layn Initiate", 100));
+
+
+      //Add some enemies
+      eUnits = std::vector<unit> (1, unit(12,15,4,"Jim", "Soldier", 11));
+      eUnits.push_back(unit(10,18,4,"John", "Soldier", 11));
+    }
+  else if(levelnum == 2)
+    {
+      clvl = lvl2;
+    }
+
+  emit moved();
 }
 
 /*************************************
@@ -421,7 +440,7 @@ void worldSpace::mousePressEvent(QMouseEvent *event)
                           for(size_t x = 0; x < eUnits.size(); x++)
                             {
                               if(eUnits[x].getcHP() <= 0)
-                                eUnits.erase(eUnits.begin()+x);
+                                eUnits[x].kill();
                             }
                         }
                     }
@@ -538,8 +557,9 @@ void worldSpace::moveChar(int dir)
 // is the one specified in the slot. False otherwise.
 bool worldSpace::isUnit(int slot, int xloc, int yloc)
 {
-  if(pUnits[slot].getX() == xloc &&
-     pUnits[slot].getY() == yloc)
+  if((pUnits[slot].getX() == xloc &&
+      pUnits[slot].getY() == yloc) && 
+     pUnits[slot].isLive())
     return true;
   else
     return false;
@@ -547,8 +567,9 @@ bool worldSpace::isUnit(int slot, int xloc, int yloc)
 
 bool worldSpace::isEnem(int slot, int xloc, int yloc)
 {
-  if(eUnits[slot].getX() == xloc &&
-     eUnits[slot].getY() == yloc)
+  if((eUnits[slot].getX() == xloc &&
+     eUnits[slot].getY() == yloc) &&
+     eUnits[slot].isLive())
     return true;
   else
     return false;

@@ -20,6 +20,10 @@ class worldSpace : public QWidget
   unit selectedUnitsel();
   bool isUnitSelected();
 
+  //Mutators
+  void start_clear_level();
+  void loadlevel(int levelnum);
+
 public slots:
   void moveUP();
   void moveDOWN();
@@ -79,6 +83,7 @@ private:
   std::vector<std::vector<tile> > clvl;
 
   //The 'impermanent' vectors that are not always visible.
+  std::vector<std::vector<tile> > lvl0;
   std::vector<std::vector<tile> > lvl1;
   std::vector<std::vector<tile> > lvl2;
   std::vector<std::vector<tile> > lvl3;

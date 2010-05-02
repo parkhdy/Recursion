@@ -7,6 +7,7 @@ unit::unit()
   cYpos = 0;
   mSpeed = 3;
   selected = false;
+  alive = true;
 
   minDMG = 5;
   maxDMG = 10;
@@ -19,6 +20,7 @@ unit::unit(int fXpos, int fYpos, int fMspeed,
   cYpos = fYpos;
   mSpeed = fMspeed;
   selected = false;
+  alive = true;
 
   unitName = fName;
   unitTitle = fTitle;
@@ -48,6 +50,11 @@ int unit::getSpeed()
 bool unit::isSelected()
 {
   return selected;
+}
+
+bool unit::isLive()
+{
+  return alive;
 }
 
 int unit::atkDMG()
@@ -98,4 +105,9 @@ void unit::desel()
 void unit::takeDamage(int damage)
 {
   cHP = cHP - damage;
+}
+
+void unit::kill()
+{
+  alive = false;
 }

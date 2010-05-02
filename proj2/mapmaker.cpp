@@ -9,8 +9,10 @@ std::vector<std::vector<tile> > mapMaker::readLevel(int whichlevel)
   if(whichlevel == 0)
     infile.open("overlay.txt");
   if(whichlevel == 1)
-    infile.open("level1.txt");
+    infile.open("level0.txt");
   if(whichlevel == 2)
+    infile.open("level1.txt");
+  if(whichlevel == 3)
     infile.open("level2.txt");
 
   std::vector<std::vector<tile> > amap;

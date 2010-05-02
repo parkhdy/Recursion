@@ -21,6 +21,8 @@ class gameSpace : public QWidget
 public:
   gameSpace(QWidget *parent = 0);
 
+  void startTutorial();
+
 signals:
   void showCharwin();
   void pickedUnitm(unit);

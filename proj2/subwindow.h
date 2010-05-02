@@ -5,7 +5,9 @@
 #include <QGridLayout>
 #include <QPushButton>
 
-//A subwindow class for adding a menu
+#include "tutText.h"
+
+//A subwindow class for adding an "action menu"
 class actionMenu : public QWidget
 {
   Q_OBJECT
@@ -18,6 +20,7 @@ signals:
   void attackOrder();
 };
 
+//A subwindow class for adding a "main menu"
 class mainMenu : public QWidget
 {
   Q_OBJECT
@@ -27,6 +30,18 @@ class mainMenu : public QWidget
 
 signals:
   void tutStart();
+};
+
+//A subwindow class for adding a small tutorial window
+class smallTutwin : public QWidget
+{
+  Q_OBJECT
+
+  public:
+  smallTutwin(QWidget *parent = 0);
+
+private:
+  tutText *textwindow;
 };
 
 #endif

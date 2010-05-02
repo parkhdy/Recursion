@@ -66,6 +66,11 @@ gameSpace::gameSpace(QWidget *parent)
   setLayout(gridLayout);
 }
 
+void gameSpace::startTutorial()
+{
+  wspace->loadlevel(1);
+}
+
 void gameSpace::moveOrderSent()
 {
   //std::cout << "Going into moverordersent" << std::endl;

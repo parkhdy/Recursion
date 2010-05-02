@@ -48,3 +48,22 @@ mainMenu::mainMenu(QWidget *parent)
   gridLayout->addWidget(button2, 1, 0);
   setLayout(gridLayout);
 }
+
+//Constructor for the smallTutwin class
+smallTutwin::smallTutwin(QWidget *parent)
+  : QWidget(parent)
+{
+  QPushButton *button1 = new QPushButton(tr("<<"));
+  button1->setFont(QFont("Times",18,QFont::Bold));
+
+  QPushButton *button2 = new QPushButton(tr(">>"));
+  button2->setFont(QFont("Times",18,QFont::Bold));
+
+  textwindow = new tutText;
+
+  QGridLayout *gridLayout = new QGridLayout;
+  gridLayout->addWidget(textwindow, 0, 0, 1, 0);
+  gridLayout->addWidget(button1, 1, 0);
+  gridLayout->addWidget(button2, 1, 1);
+  setLayout(gridLayout);
+}

@@ -4,10 +4,11 @@
 mainWindow::mainWindow()
 {
   mdiArea = new QMdiArea;
+  mdiArea->setOption(QMdiArea::DontMaximizeSubWindowOnActivation,true);
   setCentralWidget(mdiArea);
 
+  gateway = new mainMenu(mdiArea);
   theWorld = new gameSpace;
-  gateway = new mainMenu;
 
   connect(theWorld, SIGNAL(showCharwin()), 
          this, SLOT(showActions()));
@@ -21,12 +22,19 @@ mainWindow::mainWindow()
   mdiArea->addSubWindow(gateway);
   gateway->showMaximized();
 }
+
 //Slot to make a new game =O
 void mainWindow::tutOn()
 {
   //std::cout << "Going into tutOn." << std::endl;
+  sTutwin = new smallTutwin(mdiArea);
+
   mdiArea->addSubWindow(theWorld);
   theWorld->showMaximized();
+  theWorld->startTutorial();
+
+  mdiArea->addSubWindow(sTutwin);
+  sTutwin->show();
 }
 
 void mainWindow::closeGate()
@@ -35,12 +43,17 @@ void mainWindow::closeGate()
   mdiArea->removeSubWindow(gateway);
 }
 
+void mainWindow::closeAction()
+{
+  nMenu->close();
+  mdiArea->removeSubWindow(nMenu);
+}
+
 //Slot to show the subwindow
 void mainWindow::showActions()
 {
   //std::cout << "Going into addwindow." << std::endl;
-  nMenu = new actionMenu;
-  nMenu->setAttribute(Qt::WA_DeleteOnClose,true);
+  nMenu = new actionMenu(mdiArea);
 
   connect(nMenu, SIGNAL(moveOrder()),
           theWorld, SLOT(moveOrderSent()));
@@ -49,10 +62,10 @@ void mainWindow::showActions()
           theWorld, SLOT(attackOrderSent()));
 
   connect(nMenu, SIGNAL(moveOrder()),
-          nMenu, SLOT(close()));
+          this, SLOT(closeAction()));
 
   connect(nMenu, SIGNAL(attackOrder()),
-          nMenu, SLOT(close()));
+          this, SLOT(closeAction()));
 
   mdiArea->addSubWindow(nMenu);
   nMenu->show();

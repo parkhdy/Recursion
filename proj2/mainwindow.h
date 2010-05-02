@@ -22,6 +22,7 @@ class mainWindow : public QMainWindow
 public slots:
   void tutOn();
   void closeGate();
+  void closeAction();
   void showActions();
 
 private:
@@ -29,6 +30,7 @@ private:
   gameSpace *theWorld;
   mainMenu *gateway;
   actionMenu *nMenu;
+  smallTutwin *sTutwin;
 };
 
 #endif

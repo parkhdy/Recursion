@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'worldspace.h'
 **
-** Created: Sun Apr 11 00:43:43 2010
+** Created: Sat May 1 23:11:29 2010
 **      by: The Qt Meta Object Compiler version 59 (Qt 4.4.1)
 **
 ** WARNING! All changes made in this file will be lost!

@@ -18,6 +18,7 @@ public:
   int getY();
   int getSpeed();
   bool isSelected();
+  bool isLive();
   int atkDMG();
 
   std::string getName();
@@ -30,6 +31,7 @@ public:
   void sel();
   void desel();
   void takeDamage(int damage);
+  void kill();
 
 private:
   //Member variables - "hard data"
@@ -37,6 +39,7 @@ private:
   int cYpos;
   int mSpeed;
   bool selected;
+  bool alive;
   randgen atkDamage; //Every unit comes with a random number generator!
 
   //Information pertaining - "soft data"

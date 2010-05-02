@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'mainwindow.h'
 **
-** Created: Sun Apr 11 00:43:42 2010
+** Created: Sun May 2 00:02:19 2010
 **      by: The Qt Meta Object Compiler version 59 (Qt 4.4.1)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_mainWindow[] = {
        1,       // revision
        0,       // classname
        0,    0, // classinfo
-       3,   10, // methods
+       4,   10, // methods
        0,    0, // properties
        0,    0, // enums/sets
 
@@ -31,13 +31,14 @@ static const uint qt_meta_data_mainWindow[] = {
       12,   11,   11,   11, 0x0a,
       20,   11,   11,   11, 0x0a,
       32,   11,   11,   11, 0x0a,
+      46,   11,   11,   11, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_mainWindow[] = {
     "mainWindow\0\0tutOn()\0closeGate()\0"
-    "showActions()\0"
+    "closeAction()\0showActions()\0"
 };
 
 const QMetaObject mainWindow::staticMetaObject = {
@@ -67,9 +68,10 @@ int mainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         switch (_id) {
         case 0: tutOn(); break;
         case 1: closeGate(); break;
-        case 2: showActions(); break;
+        case 2: closeAction(); break;
+        case 3: showActions(); break;
         }
-        _id -= 3;
+        _id -= 4;
     }
     return _id;
 }
